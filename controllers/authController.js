@@ -4,8 +4,9 @@ const jwt = require('jsonwebtoken');
 const userModel = require('../models/user');
 const config = require('../config/config');
 
-exports.login = (req, res) => {
+exports.login = async(req, res) => {
   const { email, password } = req.body;
+
 
   userModel.findUserByEmail(email, (err, user) => {
     if (err) {
@@ -37,15 +38,40 @@ exports.login = (req, res) => {
   });
 };
 
-exports.register = (req, res) => {
-  const { name, email, password } = req.body;
+exports.register = async (req, res) => {
+  try {
+    const { name, email, password } = req.body;
 
-  userModel.createUser({ name, email, password }, (err) => {
-    if (err) {
-      console.error(err);
-      return res.status(500).json({ error: true, message: 'Internal Server Error' });
-    }
+    const hashPassword = await bcrypt.hash(password, 10)
 
-    res.json({ error: false, message: 'User created' });
-  });
+    userModel.findUserByEmail(email, (err, user) => {
+      if (err) {
+        console.error(err);
+        return res.status(500).json({ error: true, message: 'Internal Server Error' });
+      }
+
+      if (user) {
+        return res.status(400).json({ error: true, message: 'Email already exists' });
+      }
+
+      userModel.createUser({ name, email, password: hashPassword }, (err) => {
+        if (err) {
+          console.error(err);
+          return res.status(500).json({ error: true, message: 'Internal Server Error' });
+        }
+
+        res.json({
+          error: false,
+          message: 'User created',
+          datas: {
+            name,
+            email
+          }
+        });
+      });
+    })
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: true, message: 'Internal Server Error' });
+  }
 };

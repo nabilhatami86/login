@@ -33,9 +33,10 @@ module.exports = {
     });
   },
 
-  updateUser: (userId, updatedFields, callback) => {
-    const updateQuery = 'UPDATE users SET ? WHERE id = ?';
-    db.query(updateQuery, [updatedFields, userId], callback);
+  updateUser: (userId, userData, callback) => {
+    const { profilePicture } = userData;
+    const updateQuery = 'UPDATE users SET profilePicture = ? WHERE id = ?';
+    db.query(updateQuery, [profilePicture, userId], callback);
   },
 
   updateUserProfile: (userId, userData, callback) => {

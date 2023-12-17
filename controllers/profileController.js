@@ -2,8 +2,9 @@
 const userModel = require('../models/user');
 
 exports.addProfilePicture = (req, res) => {
-  const userId = req.userData.userId; // Mendapatkan ID pengguna dari token
+
   const { imageUrl } = req.body;
+  const userId = req.users.userId
 
   userModel.updateUser(userId, { profilePicture: imageUrl }, (err) => {
     if (err) {
@@ -15,20 +16,34 @@ exports.addProfilePicture = (req, res) => {
   });
 };
 
-exports.updateProfile = (req, res) => {
-  const userId = req.userData.userId; 
+// exports.updateProfile = (req, res) => {
+//   const userId = req.userData.userId; 
 
-  console.log(userId)
+//   console.log(userId)
+//   const { name, email, gender, birthdate } = req.body;
+
+//   const updatedProfile = {
+//     name,
+//     email,
+//     gender,
+//     birthdate,
+//   };
+
+//   userModel.updateUser(userId, updatedProfile, (err) => {
+//     if (err) {
+//       console.error(err);
+//       return res.status(500).json({ error: true, message: 'Internal Server Error' });
+//     }
+
+//     res.json({ error: false, message: 'Profile updated successfully' });
+//   });
+// };
+
+exports.updateProfile = (req, res) => {
+  const userId = req.users.userId;
   const { name, email, gender, birthdate } = req.body;
 
-  const updatedProfile = {
-    name,
-    email,
-    gender,
-    birthdate,
-  };
-
-  userModel.updateUser(userId, updatedProfile, (err) => {
+  userModel.updateUserProfile(userId, { name, email, gender, birthdate }, (err) => {
     if (err) {
       console.error(err);
       return res.status(500).json({ error: true, message: 'Internal Server Error' });

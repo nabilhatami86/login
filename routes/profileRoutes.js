@@ -6,7 +6,7 @@ const profileController = require('../controllers/profileController');
 
 const router = express.Router();
 
-router.post('/add-profile-picture', profileController.addProfilePicture);
-router.put('/update-profile', authMiddleware,profileController.updateProfile);
+router.post('/add-profile-picture',authMiddleware, profileController.addProfilePicture);
+router.put('/update-profile', authMiddleware, profileController.updateProfile);
 
 module.exports = router;
