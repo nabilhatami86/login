@@ -1,4 +1,3 @@
-// models/user.js
 const db = require('../config/db');
 
 const createUserTable = `
@@ -30,6 +29,21 @@ module.exports = {
     db.query(getUserQuery, [email], (err, results) => {
       if (err) throw err;
       callback(null, results[0]);
+    });
+  },
+
+  getUser: (userId, callback) => {
+    const getUserQuery = 'SELECT * FROM users WHERE id = ?';
+    db.query(getUserQuery, [userId], (err, results) => {
+      if (err) throw err;
+
+      if (results.length === 0) {
+        // No user found with the given ID
+        return callback(null, null);
+      }
+
+      const user = results[0];
+      callback(null, user);
     });
   },
 
